@@ -16,6 +16,11 @@ export interface TestRecord {
     id?: string;
     name: string;
   };
+  selected_subjects?: string[];
+  selected_topics?: Record<string, string[]>;
+  difficulty?: string;
+  duration_minutes?: number;
+  quiz_type?: 'mcq' | 'coding' | 'mixed';
 }
 
 export interface TestQuestionRecord {
@@ -33,6 +38,9 @@ export interface TestQuestionRecord {
   example_input?: string;
   example_output?: string;
   constraints?: string;
+  subject?: string;
+  topic?: string;
+  explanation?: string;
 }
 
 export interface UserProgressRecord {

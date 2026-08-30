@@ -1,12 +1,82 @@
 /**
- * Fallback questions for all 8 core CS topics.
- * Used when edge functions hit rate limits, timeouts, or network disconnection.
+ * Master CS Subjects, Sub-topics, and Rich Fallback Question Bank.
+ * Includes clear explanations, difficulty levels, and sub-topic metadata for every question.
  */
+
+export interface SubjectTopicMap {
+  subjectId: string;
+  subjectName: string;
+  category: "Core CS" | "Systems" | "Programming" | "Design";
+  description: string;
+  topics: string[];
+}
+
+export const SUBJECT_TOPICS: SubjectTopicMap[] = [
+  {
+    subjectId: "ds",
+    subjectName: "Data Structures",
+    category: "Core CS",
+    description: "Arrays, Linked Lists, Trees, Graphs, Hash Tables",
+    topics: ["Arrays & Strings", "Linked Lists", "Stacks & Queues", "Trees & Graphs", "Hash Tables & Heaps"],
+  },
+  {
+    subjectId: "algo",
+    subjectName: "Algorithms",
+    category: "Core CS",
+    description: "Sorting, Searching, Dynamic Programming, Greedy",
+    topics: ["Sorting & Searching", "Dynamic Programming", "Greedy Algorithms", "Recursion & Backtracking"],
+  },
+  {
+    subjectId: "oop",
+    subjectName: "Object-Oriented Programming",
+    category: "Programming",
+    description: "Classes, Inheritance, Polymorphism, Encapsulation",
+    topics: ["Encapsulation & Abstraction", "Inheritance & Polymorphism", "Design Patterns", "SOLID Principles"],
+  },
+  {
+    subjectId: "db",
+    subjectName: "Database Management",
+    category: "Systems",
+    description: "SQL, Normalization, Transactions, Indexing",
+    topics: ["SQL & Joins", "Normalization (1NF-3NF/BCNF)", "Transactions & ACID", "Indexing & Query Optimization"],
+  },
+  {
+    subjectId: "os",
+    subjectName: "Operating Systems",
+    category: "Systems",
+    description: "Processes, Threads, Memory Management, Scheduling",
+    topics: ["Process Scheduling", "Deadlocks & Synchronization", "Memory Management & Paging", "File Systems & Virtual Memory"],
+  },
+  {
+    subjectId: "cn",
+    subjectName: "Computer Networks",
+    category: "Systems",
+    description: "TCP/IP, HTTP, DNS, Network Security",
+    topics: ["OSI & TCP/IP Model", "HTTP/HTTPS & Web Protocols", "DNS & Routing", "Sockets & Network Security"],
+  },
+  {
+    subjectId: "web",
+    subjectName: "Web Development",
+    category: "Programming",
+    description: "HTML, CSS, JavaScript, React, APIs",
+    topics: ["JavaScript & Async/ES6", "React & Component Lifecycle", "HTML/CSS & DOM Manipulation", "REST APIs & Web Security"],
+  },
+  {
+    subjectId: "sd",
+    subjectName: "System Design",
+    category: "Design",
+    description: "Scalability, Load Balancing, Caching, Microservices",
+    topics: ["Scalability & Load Balancing", "Caching & CDNs", "Microservices & Message Queues", "Database Sharding & Replication"],
+  },
+];
 
 export interface FallbackMCQ {
   question: string;
   options: string[];
   correct: string;
+  topic?: string;
+  explanation: string;
+  difficulty?: "easy" | "medium" | "hard";
 }
 
 export interface FallbackCoding {
@@ -15,6 +85,8 @@ export interface FallbackCoding {
   example_input: string;
   example_output: string;
   constraints: string;
+  topic?: string;
+  explanation: string;
 }
 
 export interface TopicQuestions {
@@ -26,7 +98,7 @@ export const FALLBACK_QUESTIONS: Record<string, TopicQuestions> = {
   "Data Structures": {
     mcqs: [
       {
-        question: "Which data structure is primarily used to implement LRU (Least Recently Used) cache for O(1) operations?",
+        question: "Which data structure is primarily used to implement an LRU (Least Recently Used) cache for O(1) time complexity operations?",
         options: [
           "Hash Map with a Doubly Linked List",
           "Binary Search Tree with Array",
@@ -34,26 +106,41 @@ export const FALLBACK_QUESTIONS: Record<string, TopicQuestions> = {
           "Min-Heap with Queue",
         ],
         correct: "A",
+        topic: "Hash Tables & Heaps",
+        difficulty: "medium",
+        explanation: "A Hash Map provides O(1) key lookups, while a Doubly Linked List allows O(1) node removal and insertion at the head for tracking usage order.",
       },
       {
-        question: "What is the worst-case time complexity of searching for an element in an un-balanced Binary Search Tree (BST)?",
+        question: "What is the worst-case time complexity of searching for an element in an unbalanced Binary Search Tree (BST)?",
         options: ["O(log n)", "O(1)", "O(n)", "O(n log n)"],
         correct: "C",
+        topic: "Trees & Graphs",
+        difficulty: "easy",
+        explanation: "An unbalanced BST can degenerate into a single linked list (skewed tree) where finding an element requires traversing all n nodes, resulting in O(n) worst-case complexity.",
       },
       {
-        question: "Which data structure is best suited for evaluating arithmetic expressions written in postfix notation?",
+        question: "Which data structure is best suited for evaluating arithmetic expressions written in postfix (Reverse Polish) notation?",
         options: ["Queue", "Stack", "Priority Queue", "Circular Buffer"],
         correct: "B",
+        topic: "Stacks & Queues",
+        difficulty: "easy",
+        explanation: "A Stack naturally handles postfix expressions by pushing operands and popping the top two values whenever an operator is encountered.",
       },
       {
-        question: "In a min-heap with n elements, what is the time complexity of deleting the minimum element?",
+        question: "In a min-heap with n elements, what is the time complexity of deleting the root (minimum) element?",
         options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
         correct: "B",
+        topic: "Hash Tables & Heaps",
+        difficulty: "medium",
+        explanation: "Deleting the root requires swapping it with the last leaf and bubbling down (heapifying) along the height of the tree, taking O(log n) operations.",
       },
       {
-        question: "What is the average amortized time complexity for inserting an element into a dynamic array (like std::vector or ArrayList)?",
+        question: "What is the amortized time complexity for inserting an element at the end of a dynamic array (like std::vector or ArrayList)?",
         options: ["O(n)", "O(log n)", "O(1)", "O(n^2)"],
         correct: "C",
+        topic: "Arrays & Strings",
+        difficulty: "easy",
+        explanation: "Although resizing takes O(n) time occasionally when capacity doubles, the total work for n insertions is O(n), giving an amortized time of O(1) per insert.",
       },
     ],
     coding: [
@@ -62,7 +149,9 @@ export const FALLBACK_QUESTIONS: Record<string, TopicQuestions> = {
         difficulty: "easy",
         example_input: "head = [1,2,3,4,5]",
         example_output: "[5,4,3,2,1]",
-        constraints: "The number of nodes in the list is the range [0, 5000]. Node values are between -5000 and 5000.",
+        constraints: "The number of nodes in the list is in the range [0, 5000]. -5000 <= Node.val <= 5000",
+        topic: "Linked Lists",
+        explanation: "Iterate through the list while updating current node's next pointer to point to the previous node (prev), using a temporary variable to hold next node reference.",
       },
       {
         question: "Implement a queue using two stacks.\n\nYour queue should support push(), pop(), peek(), and empty() operations with O(1) amortized time complexity.",
@@ -70,6 +159,17 @@ export const FALLBACK_QUESTIONS: Record<string, TopicQuestions> = {
         example_input: '["MyQueue", "push", "push", "peek", "pop", "empty"]\n[[], [1], [2], [], [], []]',
         example_output: "[null, null, null, 1, 1, false]",
         constraints: "1 <= x <= 100. Maximum of 100 calls will be made to push, pop, peek, and empty.",
+        topic: "Stacks & Queues",
+        explanation: "Use stack1 for enqueue (push) operations. When dequeue (pop/peek) is requested, transfer elements from stack1 to stack2 if stack2 is empty to reverse the order.",
+      },
+      {
+        question: "Find the Lowest Common Ancestor (LCA) of two given nodes in a Binary Tree.",
+        difficulty: "hard",
+        example_input: "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1",
+        example_output: "3",
+        constraints: "All Node.val are unique. p != q and both p and q will exist in the tree.",
+        topic: "Trees & Graphs",
+        explanation: "Use recursive post-order traversal. If root matches p or q, return root. If both left and right subtrees return non-null, the current root is the LCA.",
       },
     ],
   },
@@ -79,448 +179,430 @@ export const FALLBACK_QUESTIONS: Record<string, TopicQuestions> = {
         question: "What is the worst-case time complexity of QuickSort?",
         options: ["O(n log n)", "O(n^2)", "O(n)", "O(log n)"],
         correct: "B",
+        topic: "Sorting & Searching",
+        difficulty: "easy",
+        explanation: "QuickSort exhibits O(n^2) worst-case complexity when the pivot chosen is consistently the smallest or largest element (e.g. already sorted array with bad pivot choice).",
       },
       {
-        question: "Dijkstra's algorithm cannot handle graphs that contain:",
-        options: [
-          "Cycles",
-          "Directed edges",
-          "Negative edge weights",
-          "Dense edges",
-        ],
+        question: "Dijkstra's shortest path algorithm fails when the graph contains:",
+        options: ["Cycles", "Directed edges", "Negative edge weights", "Dense edges"],
         correct: "C",
+        topic: "Greedy Algorithms",
+        difficulty: "medium",
+        explanation: "Dijkstra assumes that adding edges strictly increases path length. Negative weights violate this greedy choice property, leading to incorrect shortest path calculations.",
       },
       {
-        question: "Which algorithmic strategy is used by MergeSort?",
-        options: [
-          "Greedy Approach",
-          "Divide and Conquer",
-          "Dynamic Programming",
-          "Backtracking",
-        ],
+        question: "Which algorithmic paradigm is used by MergeSort?",
+        options: ["Greedy Approach", "Divide and Conquer", "Dynamic Programming", "Backtracking"],
         correct: "B",
+        topic: "Sorting & Searching",
+        difficulty: "easy",
+        explanation: "MergeSort divides the array into two halves, recursively sorts each half, and conquers by merging the two sorted sub-arrays.",
       },
       {
-        question: "What is the optimal time complexity to find the median of an unsorted array of size n?",
-        options: ["O(n log n)", "O(n)", "O(log n)", "O(n^2)"],
-        correct: "B",
-      },
-      {
-        question: "Which algorithm is commonly used to find strongly connected components in a directed graph in linear time?",
-        options: [
-          "Tarjan's or Kosaraju's Algorithm",
-          "Prim's Algorithm",
-          "Bellman-Ford Algorithm",
-          "Floyd-Warshall Algorithm",
-        ],
-        correct: "A",
+        question: "What is the space complexity of solving the 0/1 Knapsack problem using standard 2D Dynamic Programming?",
+        options: ["O(N)", "O(W)", "O(N * W)", "O(2^N)"],
+        correct: "C",
+        topic: "Dynamic Programming",
+        difficulty: "medium",
+        explanation: "The traditional DP table uses N rows (items) and W columns (capacity), resulting in O(N * W) space complexity.",
       },
     ],
     coding: [
       {
-        question: "Two Sum.\n\nGiven an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+        question: "Binary Search.\n\nGiven an array of integers nums sorted in ascending order and a target value, write a function to search target in nums in O(log n) time.",
         difficulty: "easy",
-        example_input: "nums = [2,7,11,15], target = 9",
-        example_output: "[0,1]",
-        constraints: "2 <= nums.length <= 10^4, -10^9 <= nums[i] <= 10^9",
+        example_input: "nums = [-1,0,3,5,9,12], target = 9",
+        example_output: "4",
+        constraints: "1 <= nums.length <= 10^4. All elements are unique.",
+        topic: "Sorting & Searching",
+        explanation: "Maintain two pointers (left and right). Calculate mid = left + (right - left)/2. Adjust search boundaries based on comparison with target.",
       },
       {
-        question: "Longest Substring Without Repeating Characters.\n\nGiven a string s, find the length of the longest substring without repeating characters.",
+        question: "Longest Increasing Subsequence (LIS).\n\nGiven an integer array nums, return the length of the longest strictly increasing subsequence.",
         difficulty: "medium",
-        example_input: 's = "abcabcbb"',
-        example_output: "3 (The answer is 'abc', with the length of 3)",
-        constraints: "0 <= s.length <= 5 * 10^4, s consists of English letters, digits, symbols and spaces.",
+        example_input: "nums = [10,9,2,5,3,7,101,18]",
+        example_output: "4",
+        constraints: "1 <= nums.length <= 2500. -10^4 <= nums[i] <= 10^4",
+        topic: "Dynamic Programming",
+        explanation: "Can be solved in O(n^2) with DP array where dp[i] is length of LIS ending at index i, or in O(n log n) using patience sorting with binary search.",
       },
     ],
   },
   "Object-Oriented Programming": {
     mcqs: [
       {
-        question: "Which OOP principle allows a subclass to provide a specific implementation of a method that is already provided by its parent class?",
-        options: [
-          "Method Overriding (Polymorphism)",
-          "Encapsulation",
-          "Data Abstraction",
-          "Interface Segregation",
-        ],
-        correct: "A",
+        question: "Which OOP concept enables a single method name to exhibit different behaviors based on the object or arguments passed?",
+        options: ["Encapsulation", "Polymorphism", "Inheritance", "Abstraction"],
+        correct: "B",
+        topic: "Inheritance & Polymorphism",
+        difficulty: "easy",
+        explanation: "Polymorphism ('many forms') allows methods to be overridden (runtime) or overloaded (compile-time) to perform different operations.",
       },
       {
-        question: "What does the 'L' stand for in SOLID design principles?",
+        question: "Which SOLID principle states that softare entities (classes, modules) should be open for extension but closed for modification?",
         options: [
-          "Linear Responsibility Principle",
+          "Single Responsibility Principle",
+          "Open/Closed Principle",
           "Liskov Substitution Principle",
-          "Lazy Loading Principle",
-          "Logical Interface Principle",
+          "Dependency Inversion Principle",
         ],
         correct: "B",
+        topic: "SOLID Principles",
+        difficulty: "medium",
+        explanation: "The Open/Closed Principle (OCP) encourages designing code so new functionality can be added via sub-classing or interfaces without editing existing source code.",
       },
       {
-        question: "Which design pattern ensures that a class has only one instance and provides a global access point to it?",
-        options: ["Factory Pattern", "Observer Pattern", "Singleton Pattern", "Decorator Pattern"],
-        correct: "C",
-      },
-      {
-        question: "What is the primary benefit of Encapsulation in OOP?",
-        options: [
-          "Faster program execution",
-          "Restricting direct access to internal object state and preventing unintended modifications",
-          "Allowing multiple inheritance in single inheritance languages",
-          "Automatic garbage collection",
-        ],
+        question: "Which Design Pattern restricts a class to a single instance and provides global access to it?",
+        options: ["Factory Method", "Singleton Pattern", "Observer Pattern", "Strategy Pattern"],
         correct: "B",
-      },
-      {
-        question: "In Object-Oriented Design, composition is often favored over:",
-        options: ["Abstraction", "Inheritance", "Polymorphism", "Encapsulation"],
-        correct: "B",
+        topic: "Design Patterns",
+        difficulty: "easy",
+        explanation: "The Singleton Pattern uses a private constructor and a static instance accessor to ensure only one instance exists across the application runtime.",
       },
     ],
     coding: [
       {
-        question: "Design a Parking Lot system.\n\nImplement a class `ParkingLot` that has slots for 3 types of vehicles: small (motorcycle), medium (car), and large (bus). Implement `park(vehicleType)` and `unpark(ticketId)`.",
-        difficulty: "medium",
-        example_input: 'lot = ParkingLot(small=10, medium=20, large=5)\nticket = lot.park("car")',
-        example_output: 'ticket_id returned; available car slots decreases to 19',
-        constraints: "Thread-safe consideration, all IDs must be unique.",
-      },
-      {
-        question: "Implement the Observer Pattern in code.\n\nCreate a `WeatherStation` subject that notifies multiple `DisplayDevice` observers whenever the temperature changes.",
-        difficulty: "medium",
-        example_input: 'station.register(phoneDisplay)\nstation.setTemperature(25)',
-        example_output: '"Phone Display updated: 25C"',
-        constraints: "Support registering, unregistering, and notifying arbitrary observers.",
+        question: "Design a Bank Account class with encapsulation.\n\nImplement deposit(amount), withdraw(amount), and get_balance() methods with proper input validation.",
+        difficulty: "easy",
+        example_input: "account = BankAccount(100); account.deposit(50); account.withdraw(30)",
+        example_output: "120",
+        constraints: "Amounts must be positive. Withdrawals exceeding balance must raise ValueError.",
+        topic: "Encapsulation & Abstraction",
+        explanation: "Keep balance private (__balance). Validate amount > 0 for deposits/withdrawals and enforce balance checks inside setter/withdraw methods.",
       },
     ],
   },
   "Database Management": {
     mcqs: [
       {
-        question: "Which normal form removes transitive dependencies of non-prime attributes on candidate keys?",
-        options: ["First Normal Form (1NF)", "Second Normal Form (2NF)", "Third Normal Form (3NF)", "BCNF"],
-        correct: "C",
-      },
-      {
-        question: "What property in ACID guarantees that transactions are executed independently and without interference?",
-        options: ["Atomicity", "Consistency", "Isolation", "Durability"],
-        correct: "C",
-      },
-      {
-        question: "Which data structure is most commonly utilized for relational database indexes to support range queries efficiently?",
-        options: ["Hash Table", "B+ Tree", "Red-Black Tree", "Trie"],
+        question: "Which Normal Form removes Partial Functional Dependencies (where a non-prime attribute depends on part of a composite candidate key)?",
+        options: ["First Normal Form (1NF)", "Second Normal Form (2NF)", "Third Normal Form (3NF)", "Boyce-Codd Normal Form (BCNF)"],
         correct: "B",
+        topic: "Normalization (1NF-3NF/BCNF)",
+        difficulty: "medium",
+        explanation: "Second Normal Form (2NF) ensures that a table is in 1NF and that every non-prime attribute is fully functionally dependent on the entire composite primary key.",
       },
       {
-        question: "What is the key difference between WHERE and HAVING clauses in SQL?",
-        options: [
-          "WHERE filters rows before aggregation, while HAVING filters groups after aggregation",
-          "HAVING is used only for sorting",
-          "WHERE works only on numbers",
-          "There is no functional difference",
-        ],
-        correct: "A",
+        question: "What does the 'I' in ACID transaction properties stand for?",
+        options: ["Integrity", "Isolation", "Indexability", "Immutable"],
+        correct: "B",
+        topic: "Transactions & ACID",
+        difficulty: "easy",
+        explanation: "Isolation guarantees that concurrent transactions execute independently without interfering with each other's intermediate uncommitted states.",
       },
       {
-        question: "In database concurrency control, what anomaly is prevented by the 'Serializable' isolation level but not by 'Repeatable Read'?",
-        options: ["Dirty Read", "Non-repeatable Read", "Phantom Read", "Lost Update"],
-        correct: "C",
+        question: "Which SQL clause is used to filter aggregated records after a GROUP BY clause?",
+        options: ["WHERE", "HAVING", "ORDER BY", "FILTER"],
+        correct: "B",
+        topic: "SQL & Joins",
+        difficulty: "easy",
+        explanation: "WHERE filters rows before grouping, whereas HAVING filters aggregate results (like SUM, COUNT, AVG) after grouping.",
+      },
+      {
+        question: "What type of database index structure is most widely used in RDBMS (e.g. PostgreSQL, MySQL InnoDB) for range queries?",
+        options: ["Hash Index", "B+ Tree Index", "LSM Tree", "Inverted Index"],
+        correct: "B",
+        topic: "Indexing & Query Optimization",
+        difficulty: "medium",
+        explanation: "B+ Trees maintain sorted key order with data references linked in leaves, offering efficient O(log N) point lookups and sequential range scans.",
       },
     ],
     coding: [
       {
-        question: "Write an SQL query to find the second highest salary from an `Employee` table with schema `(id INT, salary INT)`.",
+        question: "Write an SQL query to find the Nth highest salary from an Employee table.\n\nSchema: Employee(id INT, salary INT)",
         difficulty: "medium",
-        example_input: 'Employee table:\n+----+--------+\n| id | salary |\n+----+--------+\n| 1  | 100    |\n| 2  | 200    |\n| 3  | 300    |\n+----+--------+',
-        example_output: '+---------------------+\n| SecondHighestSalary |\n+---------------------+\n| 200                 |\n+---------------------+',
-        constraints: "If there is no second highest salary, return NULL.",
-      },
-      {
-        question: "Write a SQL query to find all customers who never ordered anything from table `Customers (id, name)` and `Orders (id, customerId)`.",
-        difficulty: "easy",
-        example_input: 'Customers: [(1, "Joe"), (2, "Henry")]\nOrders: [(1, 1)]',
-        example_output: 'Customers: ["Henry"]',
-        constraints: "Use LEFT JOIN or NOT IN or NOT EXISTS.",
+        example_input: "Employee table with salaries [100, 200, 300], N = 2",
+        example_output: "200",
+        constraints: "Return NULL if there are fewer than N distinct salaries.",
+        topic: "SQL & Joins",
+        explanation: "Use DENSE_RANK() OVER (ORDER BY salary DESC) or SELECT DISTINCT salary ... ORDER BY salary DESC LIMIT 1 OFFSET N-1.",
       },
     ],
   },
   "Operating Systems": {
     mcqs: [
       {
-        question: "Which of the following conditions is NOT required for a deadlock to occur (Coffman conditions)?",
-        options: [
-          "Mutual Exclusion",
-          "Hold and Wait",
-          "Preemption Allowed",
-          "Circular Wait",
-        ],
+        question: "Which of the following conditions is NOT a necessary requirement for a Deadlock to occur?",
+        options: ["Mutual Exclusion", "Hold and Wait", "Preemption", "Circular Wait"],
         correct: "C",
+        topic: "Deadlocks & Synchronization",
+        difficulty: "medium",
+        explanation: "The four Coffman deadlock conditions are Mutual Exclusion, Hold & Wait, No Preemption (preemption prevents deadlocks), and Circular Wait.",
       },
       {
-        question: "What is the primary purpose of Translation Lookaside Buffer (TLB)?",
+        question: "What is Belady's Anomaly in Operating Systems?",
         options: [
-          "Speed up virtual-to-physical memory address translation",
-          "Manage disk cache for file systems",
-          "Synchronize CPU cache across multiple cores",
-          "Handle network packet buffering",
+          "Increasing page frames leads to more page faults in FIFO replacement",
+          "CPU utilization drops when process count increases",
+          "Disk thrashing causes thread starvation",
+          "Virtual memory exceeds physical RAM limits",
         ],
         correct: "A",
+        topic: "Memory Management & Paging",
+        difficulty: "medium",
+        explanation: "Belady's Anomaly is the counter-intuitive phenomenon where increasing physical page frames increases page faults under FIFO page replacement.",
       },
       {
-        question: "Which CPU scheduling algorithm is preemptive and minimizes average waiting time?",
-        options: [
-          "First-Come, First-Served (FCFS)",
-          "Shortest Remaining Time First (SRTF)",
-          "Priority Scheduling (Non-preemptive)",
-          "Multilevel Feedback Queue with FIFO only",
-        ],
-        correct: "B",
-      },
-      {
-        question: "What phenomenon happens when a computer spends more time paging memory than executing instructions?",
-        options: ["Deadlock", "Thrashing", "Starvation", "Race Condition"],
-        correct: "B",
-      },
-      {
-        question: "What is the main difference between a process and a thread?",
-        options: [
-          "Processes share memory space by default; threads do not",
-          "Threads within the same process share code, data, and address space; processes have isolated address spaces",
-          "Threads can run on multiple machines; processes cannot",
-          "Processes are scheduled by compilers; threads are scheduled by BIOS",
-        ],
-        correct: "B",
+        question: "Which CPU scheduling algorithm gives minimum average waiting time for a given set of processes?",
+        options: ["First-Come First-Served (FCFS)", "Round Robin (RR)", "Shortest Job First (SJF)", "Priority Scheduling"],
+        correct: "C",
+        topic: "Process Scheduling",
+        difficulty: "easy",
+        explanation: "Shortest Job First (SJF) is mathematically optimal because executing shorter processes first minimizes total accumulated queue waiting time.",
       },
     ],
     coding: [
       {
-        question: "Implement the Producer-Consumer problem using pseudocode / synchronization primitives.\n\nCoordinate a bounded buffer of size N between producers and consumers using mutexes and condition variables/semaphores.",
+        question: "Simulate a Least Recently Used (LRU) Page Replacement algorithm.\n\nGiven capacity and a sequence of page references, return the total count of page faults.",
         difficulty: "medium",
-        example_input: "Buffer capacity = 5, 2 producers, 3 consumers",
-        example_output: "Producers wait when full; consumers wait when empty; no race condition.",
-        constraints: "Prevent race conditions and deadlocks without busy waiting.",
-      },
-      {
-        question: "Implement LRU Cache Page Replacement.\n\nGiven capacity `cap`, write methods `get(key)` and `put(key, value)` with O(1) time complexity.",
-        difficulty: "medium",
-        example_input: 'cache = LRUCache(2)\ncache.put(1, 1)\ncache.put(2, 2)\ncache.get(1) // returns 1\ncache.put(3, 3) // evicts key 2\ncache.get(2) // returns -1',
-        example_output: "1, -1",
-        constraints: "1 <= capacity <= 3000, 0 <= key <= 10^4",
+        example_input: "capacity = 3, pages = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]",
+        example_output: "10",
+        constraints: "1 <= capacity <= 100. 1 <= pages.length <= 1000.",
+        topic: "Memory Management & Paging",
+        explanation: "Maintain an active cache set and ordered list/map. If page missing, increment page fault count and evict oldest reference if capacity exceeded.",
       },
     ],
   },
   "Computer Networks": {
     mcqs: [
       {
-        question: "In the OSI model, at which layer does TLS/SSL encryption primarily operate?",
-        options: ["Transport / Session Layer", "Network Layer", "Data Link Layer", "Physical Layer"],
-        correct: "A",
-      },
-      {
-        question: "How does TCP ensure reliable delivery of data packets?",
-        options: [
-          "Three-way handshake, sequence numbers, checksums, and acknowledgments (ACKs) with retransmissions",
-          "Broadcasting packets to all subnet interfaces",
-          "Encrypting payloads with RSA keys",
-          "Using UDP as a fallback tunnel",
-        ],
-        correct: "A",
-      },
-      {
-        question: "What is the purpose of the ARP (Address Resolution Protocol)?",
-        options: [
-          "Map an IP address to a physical MAC address",
-          "Resolve domain names to IP addresses",
-          "Route packets across autonomous systems",
-          "Allocate dynamic IP addresses to clients",
-        ],
-        correct: "A",
-      },
-      {
-        question: "What HTTP status code is returned when a client makes too many requests in a given amount of time (Rate Limited)?",
-        options: ["401 Unauthorized", "403 Forbidden", "429 Too Many Requests", "503 Service Unavailable"],
+        question: "Which transport layer protocol provides reliable, connection-oriented byte stream transmission with congestion control?",
+        options: ["UDP", "IP", "TCP", "ICMP"],
         correct: "C",
+        topic: "OSI & TCP/IP Model",
+        difficulty: "easy",
+        explanation: "TCP uses a three-way handshake, sequence numbers, ACKs, and sliding windows to provide reliable, ordered, flow-controlled data transfer.",
       },
       {
-        question: "Which protocol is connectionless and typically preferred for latency-sensitive applications like video streaming and VoIP?",
-        options: ["TCP", "UDP", "FTP", "SSH"],
+        question: "Which HTTP status code signifies '301 Moved Permanently'?",
+        options: ["301", "302", "404", "500"],
+        correct: "A",
+        topic: "HTTP/HTTPS & Web Protocols",
+        difficulty: "easy",
+        explanation: "301 indicates a permanent URL redirect, directing search engines to update their indexed link to the new Location header target.",
+      },
+      {
+        question: "In the OSI model, at which layer does encryption/decryption (TLS/SSL) primarily operate?",
+        options: ["Transport Layer", "Presentation Layer", "Network Layer", "Session Layer"],
         correct: "B",
+        topic: "OSI & TCP/IP Model",
+        difficulty: "medium",
+        explanation: "Layer 6 (Presentation Layer) handles data formatting, compression, and cryptography/encryption before handover to application level.",
       },
     ],
     coding: [
       {
-        question: "Validate IP Address.\n\nGiven a string queryIP, return 'IPv4' if IP is a valid IPv4 address, 'IPv6' if IP is a valid IPv6 address or 'Neither' if IP is not a correct IP of any type.",
+        question: "Validate an IPv4 / IPv6 Address string.\n\nReturn 'IPv4' if valid IPv4, 'IPv6' if valid IPv6, or 'Neither' if invalid.",
         difficulty: "medium",
         example_input: 'queryIP = "172.16.254.1"',
         example_output: '"IPv4"',
-        constraints: "IPv4: 4 decimal numbers 0-255 separated by dots, no leading zeros. IPv6: 8 groups of 4 hexadecimal digits separated by colons.",
-      },
-      {
-        question: "Design a Token Bucket Rate Limiter.\n\nImplement a class `RateLimiter` with `allow_request(client_id)` that refills tokens at rate R per second up to capacity C.",
-        difficulty: "medium",
-        example_input: 'limiter = RateLimiter(capacity=5, refill_rate=1)\nallow_request("user1") -> True',
-        example_output: "Returns True if tokens available; False if throttled.",
-        constraints: "Support multiple clients concurrently.",
+        constraints: "queryIP consists of English letters, digits, and special characters '.' and ':'.",
+        topic: "Sockets & Network Security",
+        explanation: "For IPv4, split by '.', check 4 blocks in range 0-255 with no leading zeros. For IPv6, split by ':', check 8 blocks of 1-4 hex digits.",
       },
     ],
   },
   "Web Development": {
     mcqs: [
       {
-        question: "What does CORS (Cross-Origin Resource Sharing) prevent by default in modern web browsers?",
+        question: "What is the primary difference between `localStorage` and `sessionStorage` in modern web browsers?",
         options: [
-          "Web pages making unrestricted AJAX/Fetch requests to a different domain, protocol, or port without server consent",
-          "Loading CSS stylesheets from CDN",
-          "Embedding images from external domains",
-          "Running WebAssembly binaries",
+          "localStorage data persists until explicitly cleared; sessionStorage data expires when the tab closes",
+          "localStorage can store objects; sessionStorage can only store numbers",
+          "sessionStorage has a 50MB limit while localStorage has 5MB",
+          "localStorage is only available on HTTPS domains",
         ],
         correct: "A",
+        topic: "JavaScript & Async/ES6",
+        difficulty: "easy",
+        explanation: "localStorage persists across browser restarts until manually deleted. sessionStorage is bound to the current tab session lifecycle.",
       },
       {
-        question: "In React, what hook is used to memoize expensive computations between re-renders?",
-        options: ["useCallback", "useMemo", "useRef", "useEffect"],
+        question: "What is Cross-Site Scripting (XSS)?",
+        options: [
+          "An attack where unauthorized scripts are injected and executed in trusted web browsers",
+          "A server forgery attack using forged HTTP cookies",
+          "A SQL database query manipulation technique",
+          "A DNS spoofing attack redirecting IP addresses",
+        ],
+        correct: "A",
+        topic: "REST APIs & Web Security",
+        difficulty: "medium",
+        explanation: "XSS occurs when malicious scripts are injected into untrusted input fields and rendered into legitimate web pages, hijacking user sessions or cookies.",
+      },
+      {
+        question: "In React, what hook is used to perform side effects (data fetching, subscriptions, DOM mutations)?",
+        options: ["useState", "useEffect", "useMemo", "useCallback"],
         correct: "B",
-      },
-      {
-        question: "What is the purpose of HTTP 'SameSite' attribute on Cookies?",
-        options: [
-          "Mitigate Cross-Site Request Forgery (CSRF) attacks",
-          "Compress cookie payload using Brotli",
-          "Enable cross-domain sharing of authentication tokens",
-          "Encrypt the cookie with AES-256",
-        ],
-        correct: "A",
-      },
-      {
-        question: "What is the key difference between localStorage and sessionStorage?",
-        options: [
-          "localStorage data persists until explicitly cleared; sessionStorage data is cleared when the browser tab/session closes",
-          "sessionStorage has larger storage capacity (1GB vs 5MB)",
-          "localStorage is accessible on the server; sessionStorage is client-only",
-          "sessionStorage is synchronized across all browser windows",
-        ],
-        correct: "A",
-      },
-      {
-        question: "In modern CSS, what layout module is designed for one-dimensional layouts (row or column)?",
-        options: ["CSS Grid", "Flexbox", "Floats", "Multi-column layout"],
-        correct: "B",
+        topic: "React & Component Lifecycle",
+        difficulty: "easy",
+        explanation: "useEffect handles side effects after component render cycles. Its dependency array controls when the effect re-runs.",
       },
     ],
     coding: [
       {
-        question: "Implement a Debounce Function in JavaScript/TypeScript.\n\nCreate a function `debounce(fn, delay)` that ensures `fn` is only invoked after `delay` milliseconds have elapsed since the last call.",
-        difficulty: "easy",
-        example_input: "debouncedFn = debounce(searchApi, 300);\ndebouncedFn('a'); debouncedFn('ab');",
-        example_output: "searchApi called once with 'ab' after 300ms",
-        constraints: "Handle arguments and `this` context properly.",
-      },
-      {
-        question: "Deep Clone an Object.\n\nWrite a function `deepClone(obj)` that recursively copies nested objects and arrays without mutating the original or keeping references.",
+        question: "Implement a Debounce Utility Function.\n\nCreate a function `debounce(fn, delay)` that delays executing `fn` until `delay` milliseconds have elapsed since last call.",
         difficulty: "medium",
-        example_input: 'deepClone({ a: 1, b: { c: 2, d: [3, 4] } })',
-        example_output: "Exact independent copy of object",
-        constraints: "Handle nested objects, arrays, and primitive values.",
+        example_input: "fn = () => console.log('clicked'), delay = 300ms",
+        example_output: "Function executes once after 300ms inactivity",
+        constraints: "Must cancel previous timer on rapid invocation.",
+        topic: "JavaScript & Async/ES6",
+        explanation: "Return a wrapper function holding a timer variable in closure. Clear previous timer using clearTimeout(timer) and reset setTimeout.",
       },
     ],
   },
   "System Design": {
     mcqs: [
       {
-        question: "According to the CAP Theorem, in the presence of a Network Partition (P), a distributed system must choose between:",
-        options: [
-          "Consistency and Availability",
-          "Performance and Scalability",
-          "Latency and Durability",
-          "Throughput and Reliability",
-        ],
-        correct: "A",
-      },
-      {
-        question: "Which caching strategy writes data to both the cache and the backing database simultaneously before returning success?",
-        options: ["Write-Around", "Write-Through", "Write-Back (Write-Behind)", "Cache-Aside"],
+        question: "Which strategy is used to evenly distribute key-value pairs across dynamic nodes in a distributed cache (like Memcached/Cassandra) during resizes?",
+        options: ["Round Robin", "Consistent Hashing", "Least Connections", "Master-Slave Replication"],
         correct: "B",
+        topic: "Caching & CDNs",
+        difficulty: "medium",
+        explanation: "Consistent Hashing maps both keys and servers to a virtual ring, ensuring that adding or removing a node re-maps only K/N keys instead of reshuffling all keys.",
       },
       {
-        question: "Consistent Hashing is commonly used in distributed caches and load balancers because:",
+        question: "According to the CAP Theorem, a distributed system can guarantee at most two of which three properties simultaneously?",
         options: [
-          "It minimizes the number of keys that need to be remapped when nodes are added or removed",
-          "It guarantees O(1) database queries without indexing",
-          "It replaces the need for replication",
-          "It forces all traffic through a single master gateway",
+          "Consistency, Availability, Partition Tolerance",
+          "Concurrency, Authentication, Performance",
+          "Capacity, Availability, Persistence",
+          "Cacheability, Atomicity, Partitioning",
         ],
         correct: "A",
+        topic: "Scalability & Load Balancing",
+        difficulty: "easy",
+        explanation: "CAP Theorem proves that in the presence of a network Partition (P), a distributed data store must choose between Consistency (C) or Availability (A).",
       },
       {
-        question: "What is the primary purpose of a Message Queue (like Apache Kafka or RabbitMQ) in a microservices architecture?",
+        question: "What is the primary benefit of deploying a CDN (Content Delivery Network)?",
         options: [
-          "Decouple producer and consumer services and handle asynchronous, spike-tolerant communication",
-          "Serve as primary relational database storage",
-          "Encrypt network traffic between microservices",
-          "Manage DNS routing for APIs",
+          "Decreases database write locks",
+          "Serves static assets from edge locations close to users to minimize latency",
+          "Encrypted database backup replication",
+          "Automatically executes SQL queries faster",
         ],
-        correct: "A",
-      },
-      {
-        question: "What is database horizontal sharding?",
-        options: [
-          "Splitting rows of a table across multiple database instances based on a shard key",
-          "Adding more CPU and RAM to a single database server",
-          "Creating read replicas from a single primary",
-          "Moving columns of a table into separate normalized tables",
-        ],
-        correct: "A",
+        correct: "B",
+        topic: "Caching & CDNs",
+        difficulty: "easy",
+        explanation: "CDNs cache static assets (images, CSS, JS, videos) on distributed edge proxy servers globally, shortening physical round-trip distance (RTT) to end users.",
       },
     ],
     coding: [
       {
-        question: "Design a URL Shortener (like TinyURL).\n\nImplement `encode(longUrl)` and `decode(shortUrl)` using base62 encoding or hashing.",
-        difficulty: "medium",
-        example_input: 'encode("https://example.com/very/long/url")',
-        example_output: '"https://tiny.url/4e9iAk" (and decoding returns the original URL)',
-        constraints: "Collision-resistant, short URLs must be <= 7 characters.",
-      },
-      {
-        question: "Design an In-Memory Key-Value Store with TTL (Time To Live).\n\nImplement `set(key, value, ttlMs)` and `get(key)` which returns `null` if expired.",
-        difficulty: "medium",
-        example_input: 'store.set("token", "xyz", 100)\nstore.get("token") -> "xyz"\n(wait 150ms)\nstore.get("token") -> null',
-        example_output: '"xyz", then null',
-        constraints: "O(1) average lookup and insertion. Clean up expired keys efficiently.",
+        question: "Design a Rate Limiter using the Sliding Window Counter algorithm.\n\nImplement isAllowed(userId, timestamp) allowing max 5 requests per 60-second window.",
+        difficulty: "hard",
+        example_input: "requests at t=1, 2, 5, 10, 20, 25",
+        example_output: "t=25 returns false (exceeded 5 requests in 60s)",
+        constraints: "Timestamps are in non-decreasing order.",
+        topic: "Scalability & Load Balancing",
+        explanation: "Maintain queue of timestamps for each user. Evict timestamps older than (current_time - 60). Allow request if queue size < limit.",
       },
     ],
   },
 };
 
 /**
- * Returns fallback questions for a given topic
+ * Retrieves and balances fallback questions across multiple selected subjects, sub-topics, and difficulty filters.
+ */
+export function getBalancedQuestionsForConfig(config: {
+  selectedSubjects: string[];
+  selectedTopics?: Record<string, string[]>;
+  difficulty?: string;
+  numMcqs: number;
+  numCoding: number;
+}) {
+  const { selectedSubjects, selectedTopics = {}, difficulty = "Mixed", numMcqs, numCoding } = config;
+  const activeSubjects = selectedSubjects.length > 0 ? selectedSubjects : Object.keys(FALLBACK_QUESTIONS);
+
+  const selectedMcqList: Array<FallbackMCQ & { subject: string }> = [];
+  const selectedCodingList: Array<FallbackCoding & { subject: string }> = [];
+
+  // Gather eligible pool across all selected subjects
+  activeSubjects.forEach((subjectName) => {
+    const subjectBank = FALLBACK_QUESTIONS[subjectName] || FALLBACK_QUESTIONS["Data Structures"];
+    const topicFilter = selectedTopics[subjectName] || [];
+
+    // Filter MCQs by sub-topic if specific sub-topics were selected
+    const eligibleMcqs = subjectBank.mcqs.filter((q) => {
+      if (topicFilter.length === 0) return true;
+      return q.topic ? topicFilter.includes(q.topic) : true;
+    });
+
+    // Filter Coding by sub-topic & difficulty
+    const eligibleCoding = subjectBank.coding.filter((q) => {
+      const matchTopic = topicFilter.length === 0 || (q.topic ? topicFilter.includes(q.topic) : true);
+      const matchDiff =
+        !difficulty || difficulty === "Mixed" || q.difficulty?.toLowerCase() === difficulty.toLowerCase();
+      return matchTopic && matchDiff;
+    });
+
+    eligibleMcqs.forEach((q) => selectedMcqList.push({ ...q, subject: subjectName }));
+    eligibleCoding.forEach((q) => selectedCodingList.push({ ...q, subject: subjectName }));
+  });
+
+  // Pick balanced subset for MCQs
+  const mcqResult: Array<{ question: string; options: string[]; correct: string; topic: string; explanation: string; subject: string }> = [];
+  if (numMcqs > 0 && selectedMcqList.length > 0) {
+    for (let i = 0; i < numMcqs; i++) {
+      const item = selectedMcqList[i % selectedMcqList.length];
+      mcqResult.push({
+        question: item.question,
+        options: item.options,
+        correct: item.correct,
+        topic: item.topic || "General",
+        explanation: item.explanation,
+        subject: item.subject,
+      });
+    }
+  }
+
+  // Pick balanced subset for Coding
+  const codingResult: Array<{
+    question: string;
+    difficulty: "easy" | "medium" | "hard";
+    example_input: string;
+    example_output: string;
+    constraints: string;
+    topic: string;
+    explanation: string;
+    subject: string;
+  }> = [];
+
+  if (numCoding > 0 && selectedCodingList.length > 0) {
+    for (let i = 0; i < numCoding; i++) {
+      const item = selectedCodingList[i % selectedCodingList.length];
+      codingResult.push({
+        question: item.question,
+        difficulty: item.difficulty,
+        example_input: item.example_input,
+        example_output: item.example_output,
+        constraints: item.constraints,
+        topic: item.topic || "General",
+        explanation: item.explanation,
+        subject: item.subject,
+      });
+    }
+  }
+
+  return {
+    mcqQuestions: mcqResult,
+    codingQuestions: codingResult,
+  };
+}
+
+/**
+ * Backward compatibility helper for single subject lookup
  */
 export function getFallbackQuestionsForTopic(
   topicName: string,
   numMcqs: number,
   numCoding: number
-): { mcqQuestions: FallbackMCQ[]; codingQuestions: FallbackCoding[] } {
-  const topicData = FALLBACK_QUESTIONS[topicName] || FALLBACK_QUESTIONS["Data Structures"];
-  
-  const selectedMcqs: FallbackMCQ[] = [];
-  const availableMcqs = topicData.mcqs || [];
-  for (let i = 0; i < numMcqs; i++) {
-    const q = availableMcqs[i % availableMcqs.length];
-    selectedMcqs.push({
-      ...q,
-      question: numMcqs > availableMcqs.length && i >= availableMcqs.length 
-        ? `${q.question} (Variation ${Math.floor(i / availableMcqs.length) + 1})`
-        : q.question,
-    });
-  }
-
-  const selectedCoding: FallbackCoding[] = [];
-  const availableCoding = topicData.coding || [];
-  for (let i = 0; i < numCoding; i++) {
-    const q = availableCoding[i % availableCoding.length];
-    selectedCoding.push(q);
-  }
-
-  return {
-    mcqQuestions: selectedMcqs,
-    codingQuestions: selectedCoding,
-  };
+) {
+  return getBalancedQuestionsForConfig({
+    selectedSubjects: [topicName],
+    numMcqs,
+    numCoding,
+  });
 }

@@ -11,8 +11,18 @@ serve(async (req) => {
   }
 
   try {
-    const { topicName, numMcqs, numCoding } = await req.json();
-    console.log('Generating questions for:', { topicName, numMcqs, numCoding });
+    const body = await req.json();
+    const { 
+      topicName, 
+      selectedSubjects = [], 
+      selectedTopics = {}, 
+      difficulty = "Mixed", 
+      numMcqs = 5, 
+      numCoding = 1 
+    } = body;
+
+    const subjectsToUse = selectedSubjects.length > 0 ? selectedSubjects : [topicName || "Data Structures"];
+    console.log('Generating questions for:', { subjectsToUse, selectedTopics, difficulty, numMcqs, numCoding });
 
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
     if (!GEMINI_API_KEY) {
@@ -23,6 +33,10 @@ serve(async (req) => {
 
     const mcqQuestions = [];
     const codingQuestions = [];
+
+    const topicsSummaryStr = Object.entries(selectedTopics)
+      .map(([subj, topList]) => `${subj}: ${(topList as string[]).join(', ')}`)
+      .join('; ');
 
     // Generate MCQs
     if (numMcqs > 0) {
@@ -37,11 +51,12 @@ serve(async (req) => {
               parts: [
                 {
                   text: `You are an expert computer science educator creating high-quality, unique multiple-choice questions. 
-              Generate exactly ${numMcqs} MCQ questions about ${topicName}. 
-              Each question should be challenging, relevant, and based on best CS resources and real interview questions.
+              Generate exactly ${numMcqs} MCQ questions evenly distributed across these subjects: ${subjectsToUse.join(', ')}.
+              ${topicsSummaryStr ? `Focus on these specific sub-topics where applicable: ${topicsSummaryStr}.` : ''}
+              
               Return ONLY a JSON array with this exact structure:
-              [{"question": "...", "options": ["A", "B", "C", "D"], "correct": "A"}]
-              Make sure questions are diverse and don't repeat concepts.`
+              [{"question": "...", "options": ["A", "B", "C", "D"], "correct": "A", "subject": "DBMS", "topic": "Normalization", "explanation": "Detailed explanation why correct answer is right..."}]
+              Make sure questions are diverse, accurate, and include clear, educational explanations.`
                 }
               ]
             }
@@ -70,6 +85,7 @@ serve(async (req) => {
     // Generate Coding Questions
     if (numCoding > 0) {
       console.log('Generating coding questions...');
+      const targetDiffStr = difficulty === "Mixed" ? "a mix of easy, medium, and hard" : `${difficulty} level`;
       const codingResponse = await fetch(GEMINI_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,11 +96,12 @@ serve(async (req) => {
               parts: [
                 {
                   text: `You are an expert coding interviewer creating unique programming challenges. 
-              Generate exactly ${numCoding} coding questions about ${topicName}. 
-              Each should be practical, challenging, and similar to real interview questions from top tech companies.
+              Generate exactly ${numCoding} coding questions about subjects: ${subjectsToUse.join(', ')} with difficulty: ${targetDiffStr}. 
+              ${topicsSummaryStr ? `Focus on sub-topics: ${topicsSummaryStr}.` : ''}
+              
               Return ONLY a JSON array with this exact structure:
-              [{"question": "...", "difficulty": "medium", "example_input": "...", "example_output": "...", "constraints": "..."}]
-              Make questions diverse covering different aspects of ${topicName}.`
+              [{"question": "...", "difficulty": "medium", "subject": "Algorithms", "topic": "Dynamic Programming", "example_input": "...", "example_output": "...", "constraints": "...", "explanation": "Detailed solution approach explanation..."}]
+              Make questions diverse covering practical algorithmic challenges.`
                 }
               ]
             }
